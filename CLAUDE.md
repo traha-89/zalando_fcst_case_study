@@ -128,6 +128,37 @@ The CW chart shows stable order/receiving alignment across all ~22 calendar week
 
 ---
 
+## Section 4 — Modelling Approach
+
+### Method
+Day-of-week segmented lag distribution applied to the June order forecast. The model is a distribution mechanism — it smears each day's forecast orders across receipt dates using the historical lag profile. Level (total June demand) comes entirely from input_2; the model adds the operational timing pattern on top.
+
+### Structure (see MODELING_PLAN.md for full detail + code)
+- **4.1** Build lag distribution on Jan–Apr (train set)
+- **4.2** Validate on May — apply to actual May orders + April spillover; compare to actual May receipts
+- **4.3** Rebuild lag distribution on full Jan–May history
+- **4.4** Apply to June forecast + May spillover → write `data_output/expected_output.csv`
+
+### Apply function pattern
+```python
+# Merge orders with lag distribution on day_of_week_order
+# receipt_date = date_order + lag days
+# receipt_items = Forecated_items * normalised_share
+# Filter to target month, group by receipt_date, add spillover
+```
+
+### Validation metrics
+MAE (primary), MAPE, Bias, RMSE — on May predicted vs actual daily receipts.
+
+### May spillover for Jun 1–4 (exact values from input_1)
+Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
+
+### Key caveats
+- Validation tests lag model accuracy only — input_2 forecast accuracy is a separate, uncontrollable source of error
+- Month-end taper: late June order contributions (lag 1–4) fall in July and are excluded from output. Receipt total will be slightly below the June forecast total of 2,433,610 — correct behaviour, not an error
+
+---
+
 ## Notebook Structure (analysis.ipynb)
 1. Load Data
 2. Data Quality Checks
@@ -136,13 +167,18 @@ The CW chart shows stable order/receiving alignment across all ~22 calendar week
    - Quality summaries for both inputs
 3. Data Exploration
    - 3.1 Orders by Month (Trendline) ✓
-   - 3.2 Orders vs. Receivings by Calendar Week ✓
+   - 3.2 Orders vs. Receivings by Calendar Week ✓ (extended to include Jun forecast CW23–26)
    - 3.3 Orders vs. Receivings by Day of Week ✓
    - 3.4 Outliers in Historical Receiving Data ✓
    - 3.5 Lag Distribution Analysis ✓
    - 3.6 Forecasted Items by Day of Week ✓
-   - 3.7 Removed — June forecast CWs folded into 3.2 chart (shaded region + vertical dividing line distinguishing input_1 vs input_2)
+   - 3.7 Removed — June forecast CWs folded into 3.2
    - 3.8 May Spillover Quantification ✓
+4. Forecast Generation *(pending)*
+   - 4.1 Build lag distribution (Jan–Apr train set) *(pending)*
+   - 4.2 Validate on May — metrics + actual vs predicted chart *(pending)*
+   - 4.3 Rebuild lag distribution (full Jan–May) *(pending)*
+   - 4.4 Apply to June + write expected_output.csv *(pending)*
 
 ---
 
