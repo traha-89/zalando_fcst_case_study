@@ -75,7 +75,12 @@ Item-weighted percentiles (correct view for warehouse planning):
 Cap the lag distribution at **lag ≤ 4 days**. The row-weighted 99th percentile of 16 days significantly overstates the tail — driven by many rows with tiny trickle amounts at long lags.
 
 ### May spillover must be accounted for
-Late May orders (particularly from ~May 27 onwards) contribute to early June warehouse receipts. This is computable directly from input_1 since it contains actual May order data with WH receive dates extending to June 11.
+Late May orders contribute to early June warehouse receipts. Quantified directly from input_1:
+- **Total spillover: 76,058 items (3.4% of May orders)**
+- **Jun 1: 51,835 (68.2%), Jun 2: 20,650 (27.2%), Jun 3: 2,626 (3.5%), Jun 4: 173 (0.2%)**
+- Jun 5–11: long-tail trickles (~774 items total) — lag > 4, excluded by model cap
+- **Model boundary: Jun 4** — from Jun 5 onwards only June orders contribute
+- Jun 1–4 spillover values are exact known quantities from input_1, no estimation needed
 
 ### Calendar-week segmentation not pursued
 The CW chart shows stable order/receiving alignment across all ~22 calendar weeks. Segmenting the lag distribution by CW would produce thin, unreliable buckets. Not pursued.
@@ -136,8 +141,8 @@ The CW chart shows stable order/receiving alignment across all ~22 calendar week
    - 3.4 Outliers in Historical Receiving Data ✓
    - 3.5 Lag Distribution Analysis ✓
    - 3.6 Forecasted Items by Day of Week ✓
-   - 3.7 Merged into 3.2 — June forecast CWs (CW23–26) extended onto the CW chart with shaded region + vertical dividing line to distinguish input_1 vs input_2 ✓
-   - 3.8 May Spillover Quantification *(pending)*
+   - 3.7 Removed — June forecast CWs folded into 3.2 chart (shaded region + vertical dividing line distinguishing input_1 vs input_2)
+   - 3.8 May Spillover Quantification ✓
 
 ---
 
