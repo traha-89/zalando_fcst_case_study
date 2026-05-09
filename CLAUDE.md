@@ -91,10 +91,13 @@ The CW chart shows stable order/receiving alignment across all ~22 calendar week
 - Trendline uses `scipy.stats.linregress` (slope + intercept) for interpretability
 
 ### 3.2 Orders vs. Receivings by Calendar Week
-- Orders and receivings track closely for most weeks — lag is short and concentrated within the same/next week
+- Orders and receivings track closely for most historical weeks — lag is short and concentrated within the same/next week
 - CW3–CW4 spike: likely post-Christmas/January sales effect
 - CW7–CW12 dip: aligns with February seasonal trough
-- CW22–23 divergence: expected incomplete tail (late May orders still in transit into June)
+- CW22 partial week: order bar artificially small — only captures May 30–31 (2 days); receivings are higher as prior weeks' orders continue to arrive
+- CW23 shows both: spillover receivings from input_1 (Jun 6–11 arrivals of late-May orders) + Jun 6–12 forecast orders side by side on same x-position
+- CW26 shorter bar: partial week only (Jun 27–30, 4 days) — not a demand drop; daily average aligns with rest of June
+- Chart extended to include June forecast (CW23–26) as lighter orange bars, with shaded region + vertical dividing line to distinguish input_1 (actual) from input_2 (forecast). Forecast order volumes are higher than comparable historical weeks, consistent with ~8.6% June demand uplift.
 
 ### 3.3 Orders vs. Receivings by Day of Week
 - Weekdays broadly aligned; receivings meet or slightly exceed orders due to spillover
