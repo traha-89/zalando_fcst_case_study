@@ -111,6 +111,13 @@ The CW chart shows stable order/receiving alignment across all ~22 calendar week
 - Confirmed lag cap at 4 days covering ~99.9% of item volume
 - Visualisation: Zalando-themed bar chart (orange `#FF6900`) + cumulative line (dark `#1A1A1A`)
 
+### 3.6 Forecasted Items by Day of Week
+- June forecast day-of-week shape is consistent with historical pattern (Mon–Thu highest, Fri drops, Sat lowest, Sun recovers)
+- June forecast is uniformly ~20–30% higher on weekdays — reflects overall higher June demand, not a structural shift in day-of-week pattern
+- Sunday slightly below history (~73k forecast vs ~76k historical) — within normal variation
+- Saturday closely aligned (~51–54k) — most consistent day between history and forecast
+- **Modelling implication:** day-of-week segmented lag distribution is well-calibrated for the June forecast
+
 ---
 
 ## Notebook Structure (analysis.ipynb)
@@ -120,13 +127,13 @@ The CW chart shows stable order/receiving alignment across all ~22 calendar week
    - input_2: shape, missing values, date range, negatives, outliers, day-of-week distribution, cross-dataset encoding + coverage checks
    - Quality summaries for both inputs
 3. Data Exploration
-   - 3.1 Orders by Month (Trendline)
-   - 3.2 Orders vs. Receivings by Calendar Week
-   - 3.3 Orders vs. Receivings by Day of Week
-   - 3.4 Outliers in Historical Receiving Data
-   - 3.5 Lag Distribution Analysis
-   - 3.6 Forecasted Items by Day of Week *(in progress)*
-   - 3.7 Forecasted Items by Week *(pending)*
+   - 3.1 Orders by Month (Trendline) ✓
+   - 3.2 Orders vs. Receivings by Calendar Week ✓
+   - 3.3 Orders vs. Receivings by Day of Week ✓
+   - 3.4 Outliers in Historical Receiving Data ✓
+   - 3.5 Lag Distribution Analysis ✓
+   - 3.6 Forecasted Items by Day of Week ✓
+   - 3.7 Merged into 3.2 — June forecast CWs (CW23–26) extended onto the CW chart with shaded region + vertical dividing line to distinguish input_1 vs input_2 ✓
    - 3.8 May Spillover Quantification *(pending)*
 
 ---
