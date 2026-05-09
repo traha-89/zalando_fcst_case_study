@@ -21,22 +21,29 @@ Validation comes before the June forecast intentionally — it proves the approa
 
 ## 4.1 Build Lag Distribution (Jan–Apr Train Set)
 
-Filter historical data to Jan–Apr orders only, then compute average item-weighted share per `(day_of_week_order, lag)`:
+Train set: 120 unique order dates, 17–18 per day-of-week (well-balanced).
+
+**Aggregate-shares approach** (chosen over mean-of-shares — see Key Decisions in CLAUDE.md):
 
 ```python
 hist_train = hist[hist["date_order"].dt.month <= 4]
+hist_train_capped = hist_train[hist_train["lag"] <= 4]
 
-lag_dist = (
-    hist_train[hist_train["lag"] <= 4]
-    .groupby(["day_of_week_order", "lag"])["share"]
-    .mean()
+# Total items per day-of-week (denominator)
+# date_order is the lowest granularity — direct groupby is equivalent to two-step
+total_items_by_dow = hist_train_capped.groupby("day_of_week_order")["items"].sum()
+
+# Aggregate share per (day_of_week, lag)
+lag_dist_agg = (
+    hist_train_capped
+    .groupby(["day_of_week_order", "lag"])["items"]
+    .sum()
+    .div(total_items_by_dow, level="day_of_week_order")
 )
 
 # Normalise so each day-of-week sums to exactly 1.0
-lag_dist_norm = lag_dist / lag_dist.groupby("day_of_week_order").sum()
+lag_dist_norm = lag_dist_agg / lag_dist_agg.groupby("day_of_week_order").sum()
 ```
-
-The `share` column is already computed on `hist` (items / total_per_order per order date). The normalisation scales the ~99.9% coverage up to 100% — negligible numerical effect but mathematically correct.
 
 ---
 

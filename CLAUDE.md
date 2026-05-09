@@ -85,6 +85,18 @@ Late May orders contribute to early June warehouse receipts. Quantified directly
 ### Calendar-week segmentation not pursued
 The CW chart shows stable order/receiving alignment across all ~22 calendar weeks. Segmenting the lag distribution by CW would produce thin, unreliable buckets. Not pursued.
 
+### Aggregate-shares chosen over mean-of-shares for lag distribution
+Two approaches were compared for computing the lag share per (day_of_week, lag):
+- **Mean-of-shares:** average of per-date share values — each order date weighted equally regardless of volume
+- **Aggregate-shares:** sum(items at lag) / sum(total items) per day-of-week — each item weighted equally
+
+Max difference: **2.12pp** (mean: 0.63pp). Not negligible — falls on high-volume lags (lag 0/1/2) for Tue, Sun, Sat, Mon. Mean-of-shares overstates lag 0 for Tue/Mon because low-volume dates with high same-day rates pull the average up.
+**Decision: aggregate-shares.** We are distributing item volumes, so weighting each item equally is the correct approach for warehouse planning.
+
+### `share` column definition
+`hist["share"] = hist["items"] / hist["date_order"].map(total_per_order)`
+For each row: fraction of that order date's total items that arrived at a specific lag. Shares per order date sum to exactly 1.0 (verified in data quality section). Used in mean-of-shares approach only — aggregate approach works directly from `items`.
+
 ---
 
 ## Exploration Findings (Section 3)
@@ -174,8 +186,11 @@ Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
    - 3.6 Forecasted Items by Day of Week ✓
    - 3.7 Removed — June forecast CWs folded into 3.2
    - 3.8 May Spillover Quantification ✓
-4. Forecast Generation *(pending)*
-   - 4.1 Build lag distribution (Jan–Apr train set) *(pending)*
+4. Forecast Generation
+   - 4.1 Build lag distribution (Jan–Apr train set) *(in progress)*
+     - Train set: 120 unique order dates, 17–18 per day-of-week ✓
+     - Aggregate-shares approach selected over mean-of-shares ✓
+     - Normalised lag distribution (7×5 table) *(pending run)*
    - 4.2 Validate on May — metrics + actual vs predicted chart *(pending)*
    - 4.3 Rebuild lag distribution (full Jan–May) *(pending)*
    - 4.4 Apply to June + write expected_output.csv *(pending)*
