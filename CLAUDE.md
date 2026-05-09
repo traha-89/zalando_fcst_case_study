@@ -60,7 +60,9 @@ zalando_fcst_case_study/
 ML was ruled out for the lag distribution estimation step. Dataset is too small (~151 unique order dates) for ML to reliably generalise. The lag relationship has a clear physical/operational mechanism that statistical methods model directly. ML would add complexity without meaningful accuracy gains and reduces interpretability for a business audience. **Use segmented statistical methods only.**
 
 ### Day-of-week segmentation confirmed
-The lag distribution must be segmented by `day_of_week_order`. Fri/Sat/Sun have distinctly different profiles from weekdays. Exact values from the Jan–Apr normalised lag distribution:
+The lag distribution must be segmented by `day_of_week_order`. Fri/Sat/Sun have distinctly different profiles from weekdays.
+
+**Jan–Apr train set** (used for May validation):
 
 | DOW | lag 0 | lag 1 | lag 2 | lag 3 | lag 4 |
 |-----|-------|-------|-------|-------|-------|
@@ -72,12 +74,26 @@ The lag distribution must be segmented by `day_of_week_order`. Fri/Sat/Sun have 
 | Sat | 45.4% | 1.8%  | 39.7% | 11.2%| 1.8% |
 | Sun | 46.7% | 15.8% | 34.9% | 2.2% | 0.4% |
 
+**Full Jan–May history** (used for June forecast):
+
+| DOW | lag 0 | lag 1 | lag 2 | lag 3 | lag 4 |
+|-----|-------|-------|-------|-------|-------|
+| Mon | 41.2% | 22.4% | 33.6% | 2.5% | 0.3% |
+| Tue | 46.7% | 24.7% | 26.8% | 1.6% | 0.2% |
+| Wed | 48.9% | 22.8% | 25.1% | 3.2% | 0.0% |
+| Thu | 49.9% | 26.1% | 21.6% | 0.3% | 2.1% |
+| Fri | 52.5% | 19.2% | 0.4%  | 22.6%| 5.4% |
+| Sat | 45.7% | 3.3%  | 38.3% | 10.8%| 1.9% |
+| Sun | 43.3% | 15.7% | 36.9% | 3.3% | 0.7% |
+
+Shifts (Jan–May minus Jan–Apr): largest is Sunday lag 0 (-3.4pp) and lag 2 (+2.0pp). All structural patterns preserved.
+
 Key patterns:
-- **Friday:** lag 2 collapses to 0.4%, spike at lag 3 (22.6%) and lag 4 (5.6%) — Friday orders skip Saturday processing, arrive Monday–Tuesday
-- **Saturday:** near-zero lag 1 (1.8%), large lag 2 peak (39.7%) — most Saturday orders arrive Monday
-- **Sunday:** split between lag 0 (46.7%) and lag 2 (34.9%), depressed lag 1 (15.8%) — reduced Sunday warehouse operations
-- **Monday:** lag 2 (34.1%) exceeds lag 1 (23.8%) — absorbs Friday/weekend spillover from prior week
-- **Tue–Thu:** lag 0 dominates (47–50%), lags 1 and 2 broadly balanced (~20–28%)
+- **Friday:** lag 2 collapses to 0.4%, spike at lag 3 (22.6%) — Friday orders skip Saturday processing, arrive Monday–Tuesday
+- **Saturday:** near-zero lag 1 (3.3%), large lag 2 peak (38.3%) — most Saturday orders arrive Monday
+- **Sunday:** split between lag 0 (43.3%) and lag 2 (36.9%), depressed lag 1 (15.7%) — reduced Sunday warehouse operations
+- **Monday:** lag 2 (33.6%) exceeds lag 1 (22.4%) — absorbs Friday/weekend spillover from prior week
+- **Tue–Thu:** lag 0 dominates (47–50%), lags 1 and 2 broadly balanced (~21–27%)
 
 ### Lag cap at 4 days
 Item-weighted percentiles (correct view for warehouse planning):
@@ -214,7 +230,7 @@ Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
      - Normalised lag distribution (7×5 table) ✓ (exact values in Key Decisions above)
    - 4.2 Validate on May — metrics + actual vs predicted chart ✓
      - MAE: 7,862 | MAPE: 11.6% | Bias: +343 | RMSE: 10,720 (see Validation results above)
-   - 4.3 Rebuild lag distribution (full Jan–May) *(pending)*
+   - 4.3 Rebuild lag distribution (full Jan–May) ✓ (exact values in Key Decisions above)
    - 4.4 Apply to June + write expected_output.csv *(pending)*
 
 ---
