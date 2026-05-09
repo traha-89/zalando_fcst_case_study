@@ -114,7 +114,7 @@ The analysis is structured in four sections in `analysis.ipynb`:
 
 Monthly order volumes show an upward trend Jan–May 2022, with a seasonal dip in February (shortest month). Month-on-month growth: +12% (Mar), +12% (Apr), +4% (May). The June forecast (2.43M) sits above the trendline at ~8.6% above May — consistent with the growth trajectory and likely reflects seasonal demand acceleration heading into summer.
 
-> *Chart: bar chart of monthly totals (orange = actual, grey = forecast) with linear trendline. Trendline fitted on Jan–May only.*
+![Monthly Orders](images/monthly_orders.png)
 
 ### 6.2 Orders vs. Receivings by Calendar Week
 
@@ -126,7 +126,7 @@ Orders and receivings track closely for most historical weeks, confirming the la
 
 June forecast (CW23–26) shows higher volumes than comparable historical weeks, consistent with the ~8.6% demand uplift.
 
-> *Chart: grouped bar chart with actual orders (dark orange), actual receivings (dark grey), and forecast orders (light orange). Shaded region + dividing line separates historical from forecast.*
+![Orders vs Receivings by CW](images/orders_receivings_cw.png)
 
 **Model implication:** Calendar-week alignment is stable across all 22 weeks — no CW-level segmentation of the lag distribution is warranted.
 
@@ -141,11 +141,11 @@ June forecast (CW23–26) shows higher volumes than comparable historical weeks,
 
 Sunday stands out: orders remain comparable to weekdays but receivings drop to ~33k — confirming reduced Sunday warehouse operations. This is the key driver for day-of-week segmentation.
 
-> *Chart: grouped bar chart of average daily orders vs receivings per day of week (orange = orders, dark grey = receivings).*
+![Orders vs Receivings by DOW](images/orders_receivings_dow.png)
 
 **Heatmap: Lag distribution by Day of Week**
 
-> *Heatmap showing average item share per (DOW, lag) combination. Fri/Sat/Sun show distinctly different profiles from weekdays.*
+![Lag Heatmap by DOW](images/lag_heatmap_dow.png)
 
 Key patterns from the heatmap:
 - **Mon–Thu:** lag 0 dominates (~43–50%), lags 1 and 2 share the remainder
@@ -165,11 +165,13 @@ Key patterns from the heatmap:
 
 The model caps the lag distribution at **lag ≤ 4 days**, capturing ~99.9% of item volume. The row-weighted 99th percentile of 16 days significantly overstates the tail — driven by many rows carrying only a handful of items at long lags.
 
-> *Chart: bar chart of average item share per lag day (orange bars) with cumulative share line (dark grey) and 99% threshold marker.*
+![Lag Distribution](images/lag_distribution.png)
 
 ### 6.5 Forecasted Items by Day of Week
 
 The June forecast day-of-week shape is consistent with historical patterns (Mon–Thu highest, Fri drops, Sat lowest, Sun recovers), validating that the historical lag distribution applies cleanly to the June forecast. June volumes are uniformly ~20–30% higher on weekdays, reflecting the overall demand uplift — not a structural shift in DOW pattern.
+
+![Forecast DOW Comparison](images/forecast_dow_comparison.png)
 
 ### 6.6 May Spillover Quantification
 
@@ -184,7 +186,7 @@ Late May orders contribute to early June warehouse receipts. These are exact kno
 | **Total (Jun 1–4)** | **75,284** | **99.1%** |
 | Jun 5–11 (lag > 4, excluded) | ~774 | 0.9% |
 
-> *Chart: stacked bar chart of daily spillover receipts in June, stacked by contributing May order date. Model boundary line at Jun 4.*
+![May Spillover](images/may_spillover.png)
 
 **Model boundary:** from Jun 5 onwards, only June orders contribute. Jun 1–4 spillover values are added directly to model output.
 
@@ -260,7 +262,7 @@ This tests **lag model accuracy only** — whether the operational timing patter
 
 **Monthly total:** predicted 2,249,715 vs actual 2,239,069 (0.5% over).
 
-> *Chart: actual vs predicted daily receipts for May as a line chart (orange = actual, dark grey dashed = predicted). Metrics annotated at the bottom.*
+![May Validation](images/may_validation.png)
 
 **Assessment:**
 - Near-zero bias confirms no systematic directional error
@@ -306,7 +308,7 @@ The receipt total slightly exceeds the order forecast because May spillover into
 | Jun 14 (Tue) | 111,058 | Jun 29 (Wed) | 132,408 |
 | Jun 15 (Wed) | 100,115 | Jun 30 (Thu) | 116,832 |
 
-> *Chart: bar chart of predicted daily warehouse receipts for June (orange bars), Monday x-ticks, with total/taper gap annotated.*
+![June Forecast](images/june_forecast.png)
 
 ### Key patterns in the forecast
 
