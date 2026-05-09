@@ -59,11 +59,11 @@ may_orders = (
     .groupby(["date_order", "day_of_week_order"])["items"]
     .sum()
     .reset_index()
-    .rename(columns={"items": "Forecated_items"})
+    .rename(columns={"items": "Forecasted_items"})
 )
 ```
 
-Renaming to `Forecated_items` (matching the typo in `fc`) allows the apply function to be reused unchanged.
+Renaming to `Forecasted_items` (corrected spelling) to match the column name used in `apply_lag_model`.
 
 **April spillover into May** — exact known receipts from input_1:
 
@@ -91,12 +91,12 @@ actual_may = (
 ### Apply lag distribution
 
 ```python
-def apply_lag_model(orders_df, lag_dist_norm, spillover_series, target_month):
+def apply_lag_model(orders_df, lag_dist, spillover_series, target_month):
     fc_lag = orders_df.merge(
-        lag_dist_norm.reset_index(), on="day_of_week_order"
+        lag_dist.reset_index(), on="day_of_week_order"
     )
     fc_lag["receipt_date"] = fc_lag["date_order"] + pd.to_timedelta(fc_lag["lag"], unit="D")
-    fc_lag["receipt_items"] = fc_lag["Forecated_items"] * fc_lag["share"]
+    fc_lag["receipt_items"] = fc_lag["Forecasted_items"] * fc_lag["share"]
 
     receipts = (
         fc_lag[fc_lag["receipt_date"].dt.month == target_month]
@@ -167,18 +167,38 @@ lag_dist_full_norm = (lag_dist_full / lag_dist_full.groupby("day_of_week_order")
 
 More data → more reliable estimates, especially for weekend days (fewer unique dates).
 
+### Results
+
+Distribution is broadly stable vs Jan–Apr. Largest shift: Sunday lag 0 drops 3.4pp (46.7% → 43.3%), lag 2 rises 2.0pp (34.9% → 36.9%). All structural patterns preserved (Friday lag-3 spike, Saturday lag-2 peak, Sunday suppressed lag-1). See CLAUDE.md Key Decisions for full table comparison.
+
 ---
 
 ## 4.4 Apply to June Forecast
 
-May spillover (already computed in section 3.8):
+### Prepare May spillover
+
+Exact known receipts from input_1 — no lag cap applied (the lag cap governs the model, not observed historical data). Capped to Jun 1–4 by date; Jun 5–11 long-tail trickles (lag > 4) are excluded per model boundary.
 
 ```python
-june_receipts = apply_lag_model(fc, lag_dist_full_norm, spillover_daily, target_month=6)
+spillover_daily = (
+    hist[
+        (hist["date_order"].dt.month == 5) &
+        (hist["date_wh_receive"].dt.month == 6)
+    ]
+    .groupby("date_wh_receive")["items"]
+    .sum()
+)
+spillover_daily = spillover_daily[spillover_daily.index <= pd.Timestamp("2022-06-04")]
 ```
 
-Where `spillover_daily` is the daily May spillover series from section 3.8:
-- Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
+Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173 | Total: 75,284 items
+
+### Apply model
+
+```python
+fc_clean = fc.rename(columns={"Forecated_items": "Forecasted_items"})
+june_receipts = apply_lag_model(fc_clean, lag_dist_full_norm, spillover_daily, target_month=6)
+```
 
 ### Final output
 
@@ -192,12 +212,13 @@ output = (
     .reset_index()
 )
 output.columns = ["date_wh_receive", "items"]
-output.to_csv("data_output/expected_output.csv", index=False)
+output["date_wh_receive"] = output["date_wh_receive"].dt.strftime("%Y-%m-%d")
+output.to_csv("data_output/202402_Data - Case Study - Analyst Network Planning_vShared - Expected_output.csv", index=False)
 ```
 
 ### Sanity check
 
-Total output items should be slightly less than the June forecast total (2,433,610) — the difference represents late-June orders arriving in July (Jun 27–30 lag 1–4 contributions fall outside the output window). This is correct behaviour, not an error.
+Total receipts (2,435,582) slightly exceed the June order forecast (2,433,610) by 1,972 items. This is expected — May spillover (75,284) is larger than the month-end taper (~73,312 items from Jun 27–30 lag 1–4 falling in July). The net surplus is the difference between the two. Not a model error.
 
 ---
 

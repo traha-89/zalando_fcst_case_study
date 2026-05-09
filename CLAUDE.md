@@ -199,12 +199,19 @@ Day-of-week segmented lag distribution applied to the June order forecast. The m
 Monthly total: predicted 2,249,715 vs actual 2,239,069 (0.5% over). Model is well-calibrated.
 April spillover into May: 75,050 items across 15 receipt dates.
 
+### May spillover for Jun 1–4 (exact values from input_1, no lag cap)
+Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173 | Total: 76,058 items
+Note: lag cap applies to the model only — actual historical spillover is used as-is for Jun 1–4.
+
+### June forecast output (4.4)
+- **Total receipts: 2,435,582 items** vs June order forecast of 2,433,610 (+1,972 net)
+- Receipts exceed the order total because May spillover Jun 1–4 (75,284 items) is larger than the month-end taper (~73,312 items from Jun 27–30 lag 1–4 falling in July)
+- Jun 27–30 spike correctly reflects the Jun 28 high-order day (183,785 items) propagating through lags
+- Sundays consistently low; Mondays consistently peak — day-of-week pattern preserved throughout
+
 ### Key caveats
 - Validation tests lag model accuracy only — input_2 forecast accuracy is a separate, uncontrollable source of error
-- Month-end taper: late June order contributions (lag 1–4) fall in July and are excluded from output. Receipt total will be slightly below the June forecast total of 2,433,610 — correct behaviour, not an error
-
-### May spillover for Jun 1–4 (exact values from input_1)
-Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
+- Month-end taper: late June order contributions (lag 1–4) fall in July. Net receipt total may be slightly above or below the June order total depending on whether spillover outweighs taper — not an error
 
 ---
 
@@ -231,7 +238,7 @@ Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
    - 4.2 Validate on May — metrics + actual vs predicted chart ✓
      - MAE: 7,862 | MAPE: 11.6% | Bias: +343 | RMSE: 10,720 (see Validation results above)
    - 4.3 Rebuild lag distribution (full Jan–May) ✓ (exact values in Key Decisions above)
-   - 4.4 Apply to June + write expected_output.csv *(pending)*
+   - 4.4 Apply to June + write expected_output.csv ✓ (total receipts: 2,435,582 items)
 
 ---
 
