@@ -172,15 +172,23 @@ Day-of-week segmented lag distribution applied to the June order forecast. The m
 # Filter to target month, group by receipt_date, add spillover
 ```
 
-### Validation metrics
-MAE (primary), MAPE, Bias, RMSE — on May predicted vs actual daily receipts.
+### Validation results (4.2 — May, out-of-sample)
+| Metric | Value | Interpretation |
+|--------|-------|----------------|
+| MAE    | 7,862 items/day | ~11% of average daily receipts (72,200) — timing error |
+| MAPE   | 11.6% | Acceptable for a statistical lag model |
+| Bias   | +343 items/day | Negligible — no systematic over/under-forecast |
+| RMSE   | 10,720 items | RMSE/MAE = 1.36 — no extreme peak-day misses |
 
-### May spillover for Jun 1–4 (exact values from input_1)
-Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
+Monthly total: predicted 2,249,715 vs actual 2,239,069 (0.5% over). Model is well-calibrated.
+April spillover into May: 75,050 items across 15 receipt dates.
 
 ### Key caveats
 - Validation tests lag model accuracy only — input_2 forecast accuracy is a separate, uncontrollable source of error
 - Month-end taper: late June order contributions (lag 1–4) fall in July and are excluded from output. Receipt total will be slightly below the June forecast total of 2,433,610 — correct behaviour, not an error
+
+### May spillover for Jun 1–4 (exact values from input_1)
+Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
 
 ---
 
@@ -204,7 +212,8 @@ Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
      - Train set: 120 unique order dates, 17–18 per day-of-week ✓
      - Aggregate-shares approach selected over mean-of-shares ✓
      - Normalised lag distribution (7×5 table) ✓ (exact values in Key Decisions above)
-   - 4.2 Validate on May — metrics + actual vs predicted chart *(pending)*
+   - 4.2 Validate on May — metrics + actual vs predicted chart ✓
+     - MAE: 7,862 | MAPE: 11.6% | Bias: +343 | RMSE: 10,720 (see Validation results above)
    - 4.3 Rebuild lag distribution (full Jan–May) *(pending)*
    - 4.4 Apply to June + write expected_output.csv *(pending)*
 

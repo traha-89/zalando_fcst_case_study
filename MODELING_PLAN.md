@@ -135,6 +135,17 @@ rmse  = ((comparison["actual"] - comparison["predicted"]) ** 2).mean() ** 0.5
 
 Actual vs predicted daily receipts for May as a line chart (orange = actual, dark grey = predicted). Day-of-week patterns and any systematic bias should be immediately visible.
 
+### Results (Jan–Apr lag distribution applied to May)
+
+| Metric | Value |
+|--------|-------|
+| MAE    | 7,862 items/day |
+| MAPE   | 11.6% |
+| Bias   | +343 items/day |
+| RMSE   | 10,720 items |
+
+Monthly total: predicted 2,249,715 vs actual 2,239,069 (0.5% over). Near-zero bias, no structural peak-day misses. Model is well-calibrated — proceed to 4.3.
+
 ---
 
 ## 4.3 Rebuild Lag Distribution on Full Jan–May History
