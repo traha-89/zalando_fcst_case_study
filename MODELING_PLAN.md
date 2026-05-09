@@ -41,8 +41,8 @@ lag_dist_agg = (
     .div(total_items_by_dow, level="day_of_week_order")
 )
 
-# Normalise so each day-of-week sums to exactly 1.0
-lag_dist_norm = lag_dist_agg / lag_dist_agg.groupby("day_of_week_order").sum()
+# Normalise so each day-of-week sums to exactly 1.0; rename to "share" for apply function
+lag_dist_norm = (lag_dist_agg / lag_dist_agg.groupby("day_of_week_order").sum()).rename("share")
 ```
 
 ---
@@ -142,12 +142,16 @@ Actual vs predicted daily receipts for May as a line chart (orange = actual, dar
 Same logic as 4.1 but using the complete `hist` dataset:
 
 ```python
+hist_capped = hist[hist["lag"] <= 4]
+total_items_by_dow_full = hist_capped.groupby("day_of_week_order")["items"].sum()
+
 lag_dist_full = (
-    hist[hist["lag"] <= 4]
-    .groupby(["day_of_week_order", "lag"])["share"]
-    .mean()
+    hist_capped
+    .groupby(["day_of_week_order", "lag"])["items"]
+    .sum()
+    .div(total_items_by_dow_full, level="day_of_week_order")
 )
-lag_dist_full_norm = lag_dist_full / lag_dist_full.groupby("day_of_week_order").sum()
+lag_dist_full_norm = (lag_dist_full / lag_dist_full.groupby("day_of_week_order").sum()).rename("share")
 ```
 
 More data → more reliable estimates, especially for weekend days (fewer unique dates).

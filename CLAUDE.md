@@ -60,11 +60,24 @@ zalando_fcst_case_study/
 ML was ruled out for the lag distribution estimation step. Dataset is too small (~151 unique order dates) for ML to reliably generalise. The lag relationship has a clear physical/operational mechanism that statistical methods model directly. ML would add complexity without meaningful accuracy gains and reduces interpretability for a business audience. **Use segmented statistical methods only.**
 
 ### Day-of-week segmentation confirmed
-The lag distribution must be segmented by `day_of_week_order`. Fri/Sat/Sun have distinctly different profiles from weekdays:
-- **Friday:** lag 2 = 0%, spike at lag 3 (22%) — Friday orders skip Saturday processing, arrive Monday
-- **Saturday:** lag 1 = 3%, lag 2 = 37% — most Saturday orders arrive Monday
-- **Sunday:** lag 1 = 15%, lag 2 = 35% — reduced Sunday warehouse operations
-- **Mon–Thu:** broadly similar (lag 0: ~43–50%, lag 1: ~22–25%, lag 2: ~21–33%)
+The lag distribution must be segmented by `day_of_week_order`. Fri/Sat/Sun have distinctly different profiles from weekdays. Exact values from the Jan–Apr normalised lag distribution:
+
+| DOW | lag 0 | lag 1 | lag 2 | lag 3 | lag 4 |
+|-----|-------|-------|-------|-------|-------|
+| Mon | 41.0% | 23.8% | 34.1% | 1.0% | 0.2% |
+| Tue | 47.8% | 25.4% | 25.7% | 0.8% | 0.2% |
+| Wed | 48.8% | 23.8% | 24.5% | 2.9% | 0.0% |
+| Thu | 49.5% | 27.7% | 20.6% | 0.3% | 1.9% |
+| Fri | 52.3% | 19.2% | 0.4%  | 22.6%| 5.6% |
+| Sat | 45.4% | 1.8%  | 39.7% | 11.2%| 1.8% |
+| Sun | 46.7% | 15.8% | 34.9% | 2.2% | 0.4% |
+
+Key patterns:
+- **Friday:** lag 2 collapses to 0.4%, spike at lag 3 (22.6%) and lag 4 (5.6%) — Friday orders skip Saturday processing, arrive Monday–Tuesday
+- **Saturday:** near-zero lag 1 (1.8%), large lag 2 peak (39.7%) — most Saturday orders arrive Monday
+- **Sunday:** split between lag 0 (46.7%) and lag 2 (34.9%), depressed lag 1 (15.8%) — reduced Sunday warehouse operations
+- **Monday:** lag 2 (34.1%) exceeds lag 1 (23.8%) — absorbs Friday/weekend spillover from prior week
+- **Tue–Thu:** lag 0 dominates (47–50%), lags 1 and 2 broadly balanced (~20–28%)
 
 ### Lag cap at 4 days
 Item-weighted percentiles (correct view for warehouse planning):
@@ -90,7 +103,7 @@ Two approaches were compared for computing the lag share per (day_of_week, lag):
 - **Mean-of-shares:** average of per-date share values — each order date weighted equally regardless of volume
 - **Aggregate-shares:** sum(items at lag) / sum(total items) per day-of-week — each item weighted equally
 
-Max difference: **2.12pp** (mean: 0.63pp). Not negligible — falls on high-volume lags (lag 0/1/2) for Tue, Sun, Sat, Mon. Mean-of-shares overstates lag 0 for Tue/Mon because low-volume dates with high same-day rates pull the average up.
+Max difference: **2.12pp on Tue lag 0** (mean: 0.63pp across all DOW/lag combos). Top-5 differences (1.51–2.12pp) all fall on lag 0–2 for Tue, Mon, Sun, Sat. Direction varies: mean-of-shares overstates lag 0 for Tue/Mon (low-volume dates with high same-day rates pull average up); understates lag 2 for Sun/Sat. Both effects push items earlier than they actually arrive.
 **Decision: aggregate-shares.** We are distributing item volumes, so weighting each item equally is the correct approach for warehouse planning.
 
 ### `share` column definition
@@ -187,10 +200,10 @@ Jun 1: 51,835 | Jun 2: 20,650 | Jun 3: 2,626 | Jun 4: 173
    - 3.7 Removed — June forecast CWs folded into 3.2
    - 3.8 May Spillover Quantification ✓
 4. Forecast Generation
-   - 4.1 Build lag distribution (Jan–Apr train set) *(in progress)*
+   - 4.1 Build lag distribution (Jan–Apr train set) ✓
      - Train set: 120 unique order dates, 17–18 per day-of-week ✓
      - Aggregate-shares approach selected over mean-of-shares ✓
-     - Normalised lag distribution (7×5 table) *(pending run)*
+     - Normalised lag distribution (7×5 table) ✓ (exact values in Key Decisions above)
    - 4.2 Validate on May — metrics + actual vs predicted chart *(pending)*
    - 4.3 Rebuild lag distribution (full Jan–May) *(pending)*
    - 4.4 Apply to June + write expected_output.csv *(pending)*
