@@ -355,6 +355,7 @@ All 12 checks passed. In a production setting these would be extended with KPI m
 | Limitation | Detail |
 |-----------|--------|
 | **Forecast accuracy dependency** | The model distributes timing only. If input_2's order volumes are wrong, receipt totals will be off by a similar proportion — entirely outside the model's control |
+| **Confidence Intervals** | Bootstrap the lag distribution (resample historical order dates with replacement, recompute lag shares per run) to produce empirical uncertainty bands per day. Particularly valuable for staffing decisions given the asymmetric cost of under-forecasting vs over-forecasting — planners need to know the upside risk, not just the point estimate. Note: bootstrapping captures lag model uncertainty only; input_2 forecast accuracy is a separate, unquantifiable source of error from this dataset. |
 | **Single warehouse** | The model is calibrated to one warehouse's operational patterns; lag profiles would differ for other sites |
 | **Small training set** | 151 unique order dates (17–18 per DOW per month) is sufficient for a statistical model but limits precision, particularly for weekend days |
 | **Static lag distribution** | The model assumes lag patterns are stable across time. Operational changes (new shifts, carrier changes, warehouse expansion) would not be captured without retraining |
