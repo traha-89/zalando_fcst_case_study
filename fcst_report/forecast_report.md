@@ -324,8 +324,6 @@ The receipt total slightly exceeds the order forecast because May spillover into
 
 ---
 
----
-
 ## 11. Output Verification
 
 The following automated checks run in `analysis.ipynb` immediately after the forecast CSV is written. Each check raises an explicit error if the condition is violated, preventing a broken output from being silently accepted.
