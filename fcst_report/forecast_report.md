@@ -1,10 +1,14 @@
 # Zalando Network Planning — Warehouse Inbound Forecast Report
 
-**Project:** Logistics Network Planning Case Study
-**Scope:** Inbound operations, single warehouse
+**Project:** Logistics Network Planning Case Study  
+**Scope:** Inbound operations, single warehouse  
 **Output:** Daily warehouse receipt forecast, June 1–30, 2022
 
 ---
+
+## Executive Summary
+
+This report presents a daily warehouse receipt forecast for June 2022, produced for Zalando's Schönefeld inbound operations. Using 5 months of historical order-to-receipt data (Jan–May 2022), a day-of-week segmented lag distribution was fitted to capture how long orders take to physically arrive at the warehouse — a pattern that varies materially by day, particularly on weekends. This distribution was applied to the business-provided June order forecast to produce a daily receipt volume prediction for each of the 30 days in June. Validated on a May hold-out set, the model achieves a **MAPE of 11.6% and near-zero bias**, confirming it captures the operational timing pattern without systematic over- or under-forecasting. The June forecast totals 2,435,582 items, with Mondays consistently peaking due to weekend spillover accumulation and a notable receipt spike around Jun 28–30 driven by a high-order day in the sales forecast.
 
 ## 1. Goal
 
