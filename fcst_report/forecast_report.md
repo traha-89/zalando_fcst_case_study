@@ -154,7 +154,7 @@ Sunday stands out: orders remain comparable to weekdays but receivings drop to ~
 
 Key patterns from the heatmap:
 - **Mon–Thu:** lag 0 dominates (~43–50%), lags 1 and 2 share the remainder
-- **Friday:** lag 2 collapses to ~0%, spike at lag 3 (22%) — Friday orders skip Saturday processing, arrive Monday
+- **Friday:** lag 2 collapses to ~0%, spike at lag 3 (22%) — Friday orders skip Sunday processing, arrive Monday
 - **Saturday:** near-zero lag 1 (2%), large lag 2 peak (40%) — most Saturday orders arrive Monday
 - **Sunday:** split between lag 0 (47%) and lag 2 (35%), depressed lag 1 (16%) — reduced Sunday operations
 

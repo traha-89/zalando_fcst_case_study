@@ -89,7 +89,7 @@ The lag distribution must be segmented by `day_of_week_order`. Fri/Sat/Sun have 
 Shifts (Jan–May minus Jan–Apr): largest is Sunday lag 0 (-3.4pp) and lag 2 (+2.0pp). All structural patterns preserved.
 
 Key patterns:
-- **Friday:** lag 2 collapses to 0.4%, spike at lag 3 (22.6%) — Friday orders skip Saturday processing, arrive Monday–Tuesday
+- **Friday**: lag 2 collapses to 0.4%, spike at lag 3 (22.6%) — Friday orders skip Sunday processing, arrive Monday–Tuesday
 - **Saturday:** near-zero lag 1 (3.3%), large lag 2 peak (38.3%) — most Saturday orders arrive Monday
 - **Sunday:** split between lag 0 (43.3%) and lag 2 (36.9%), depressed lag 1 (15.7%) — reduced Sunday warehouse operations
 - **Monday:** lag 2 (33.6%) exceeds lag 1 (22.4%) — absorbs Friday/weekend spillover from prior week
