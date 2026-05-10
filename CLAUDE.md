@@ -27,7 +27,7 @@ zalando_fcst_case_study/
 - Covers 151 unique order dates: **Jan 1 – May 31, 2022**
 - WH receive dates extend to **Jun 11, 2022** (late May orders spill into June)
 - Columns: `date_order`, `day_of_week_order`, `date_wh_receive`, `day_of_week_wh_receive`, `CW` (calendar week of receipt), `items`
-- Day-of-week encoding: **1 = Monday, 7 = Sunday** (verified against pandas `dt.dayofweek`)
+- Day-of-week encoding: **1 = Monday, 7 = Sunday** (ISO weekday standard, 1-indexed). Note: pandas `dt.dayofweek` is 0-indexed (0 = Monday, 6 = Sunday) — differs by 1 for every day. Verified by cross-checking Jan 1 2022 (Saturday) = 6 in input data, consistent with 1-indexed encoding.
 
 ### input_2 — Sales Forecast (`data_input/`)
 - 30 rows × 3 columns
