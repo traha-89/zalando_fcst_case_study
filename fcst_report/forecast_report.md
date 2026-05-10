@@ -70,7 +70,7 @@ The analysis is structured in four sections in `analysis.ipynb`:
    ├── 3.4 Outliers in Historical Receiving Data
    ├── 3.5 Lag Distribution Analysis
    ├── 3.6 Forecasted Items by Day of Week
-   └── 3.8 May Spillover Quantification
+   └── 3.7 May Spillover Quantification
 4. Forecast Generation
    ├── 4.1 Build Lag Distribution (Jan–Apr train set)
    ├── 4.2 Validate on May
@@ -324,7 +324,32 @@ The receipt total slightly exceeds the order forecast because May spillover into
 
 ---
 
-## 11. Limitations and Scope of Improvement
+---
+
+## 11. Output Verification
+
+The following automated checks run in `analysis.ipynb` immediately after the forecast CSV is written. Each check raises an explicit error if the condition is violated, preventing a broken output from being silently accepted.
+
+| Check | Condition | Result |
+|-------|-----------|--------|
+| Row count | Exactly 30 rows | ✅ PASS |
+| Column names | Match template (`date_wh_receive`, `items`) | ✅ PASS |
+| No zero or negative days | Min value > 0 | ✅ PASS |
+| No null values | Zero nulls in output | ✅ PASS |
+| Integer dtype | `items` column is integer | ✅ PASS |
+| Dates sorted ascending | Monotonically increasing | ✅ PASS |
+| Receipt total within ±5% of June order forecast | \|2,435,582 − 2,433,610\| / 2,433,610 = 0.08% | ✅ PASS |
+| Sundays below 50% of weekday average | Avg Sunday 33k vs avg weekday 89k | ✅ PASS |
+| Jun 1 spillover floor (≥ 51,835) | 90,853 | ✅ PASS |
+| Jun 2 spillover floor (≥ 20,650) | 68,048 | ✅ PASS |
+| Jun 28 spike propagates (Jun 29 & 30 > 100k) | 132,408 and 116,832 | ✅ PASS |
+| Month-end taper (Jun 29 & 30 < Jun 28) | 132,408 < 157,058 ✓; 116,832 < 157,058 ✓ | ✅ PASS |
+
+All 12 checks passed. In a production setting these would be extended with KPI monitoring once actuals become available — tracking rolling MAE, weekly bias, and the Sunday receipt ratio to detect operational changes that would require retraining.
+
+---
+
+## 12. Limitations and Scope of Improvement
 
 ### Current Limitations
 
