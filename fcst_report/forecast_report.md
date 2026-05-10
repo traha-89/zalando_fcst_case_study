@@ -89,6 +89,7 @@ The analysis is structured in four sections in `analysis.ipynb`:
 | Missing values | None |
 | Duplicate rows | None |
 | Negative / zero items | None |
+| Date gaps (order dates) | None — all 151 calendar days Jan–May present |
 | Share sums per order date | All exactly 1.0 — no data gaps |
 | Outlier detection (IQR) | Flagged 326 rows (~18.5%) — rejected as unsuitable due to structural right-skew |
 | Outlier detection (magnitude gap) | **1 anomaly** — May 29 (items = 27,533,000; 367.9× next highest value) |
